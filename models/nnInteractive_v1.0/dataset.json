@@ -1,0 +1,10 @@
+{
+    "channel_names": {
+        "0": "nonCT"
+    },
+    "file_ending": ".nii.gz",   
+    "labels":{"background": 0},
+    "name": "Dataset225_nnInteractiveV2",
+    "numTraining": 1,
+    "overwrite_image_reader_writer": "NibabelIOWithReorient"
+}

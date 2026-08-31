@@ -1,0 +1,9 @@
+numpy
+nibabel
+SimpleITK
+itk-elastix
+torch
+torchvision
+scipy
+nnInteractive
+huggingface_hub
