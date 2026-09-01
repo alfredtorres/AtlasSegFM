@@ -9,6 +9,7 @@
 [![arXiv](https://img.shields.io/badge/arXiv-2512.18176-b31b1b.svg)](https://arxiv.org/abs/2512.18176)
 [![Paper](https://img.shields.io/badge/Paper-PDF-green.svg)](https://arxiv.org/pdf/2512.18176)
 [![ECCV](https://img.shields.io/badge/ECCV-2026%20Spotlight-orange.svg)](https://eccv.ecva.net/virtual/2026/spotlight/6050)
+[![Poster](https://img.shields.io/badge/ECCV-Poster-blue.svg)](https://eccv.ecva.net/virtual/2026/poster/3573)
 [![GitHub](https://img.shields.io/badge/GitHub-alfredtorres%2FAtlasSegFM-black.svg)](https://github.com/alfredtorres/AtlasSegFM)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
 [![PyTorch](https://img.shields.io/badge/PyTorch-%3E%3D2.0-ee4c2c.svg)](https://pytorch.org/)
@@ -49,6 +50,7 @@ Accurate segmentation of anatomical structures in medical images is essential fo
 [[arXiv]](https://arxiv.org/abs/2512.18176)
 [[PDF]](https://arxiv.org/pdf/2512.18176)
 [[ECCV Spotlight]](https://eccv.ecva.net/virtual/2026/spotlight/6050)
+[[ECCV Poster]](https://eccv.ecva.net/virtual/2026/poster/3573)
 
 ## Method
 
@@ -115,7 +117,7 @@ nnInteractive model license: [CC BY-NC-SA 4.0](https://huggingface.co/MIC-DKFZ/n
 
 ## Quick Start
 
-This release includes a minimal pair from **[HaN-Seg](https://github.com/MIC-DKFZ/HaN-Seg)** (case **01** as query, case **06** as support), using the preprocessed CT volumes from our internal pipeline.
+This release includes a minimal pair from **[HaN-Seg](https://han-seg2023.grand-challenge.org/)** ([download](https://zenodo.org/records/7442914#.ZBtfBHbMJaQ); case **01** as query, case **06** as support), using the preprocessed CT volumes from our internal pipeline.
 
 | Role | Volume | Registration | Label usage |
 |------|--------|--------------|-------------|
@@ -220,18 +222,6 @@ If you use this code or find AtlasSegFM useful, please cite:
 }
 ```
 
-```bibtex
-@misc{zhang2026atlasperfectcontextoneshot,
-  title         = {Atlas is Your Perfect Context: One-Shot Customization for Generalizable Foundational Medical Image Segmentation},
-  author        = {Ziyu Zhang and Yi Yu and Simeng Zhu and Ahmed Aly and Yunhe Gao and Ning Gu and Yuan Xue},
-  year          = {2026},
-  eprint        = {2512.18176},
-  archivePrefix = {arXiv},
-  primaryClass  = {cs.CV},
-  url           = {https://arxiv.org/abs/2512.18176}
-}
-```
-
 Please also cite **nnInteractive**, **VoxelMorph**, and **RDP** when using the corresponding components, and **HaN-Seg** if you use the bundled demo data.
 
 ## Acknowledgements
@@ -240,9 +230,9 @@ The deformable registration module in `model/` is adapted from existing open-sou
 
 - **[VoxelMorph](https://github.com/voxelmorph/voxelmorph)** — registration architecture and training utilities.
   Balakrishnan, G., Zhao, A., Sabuncu, M. R., Guttag, J., & Dalca, A. V. (2019). VoxelMorph: a learning framework for deformable medical image registration. *IEEE TMI*, 38(8), 1788–1800.
-- **RDP** — `model/model_rdp.py` is based on the RDP registration model shared by Haiqiao Wang (Shenzhen University), which itself builds upon VoxelMorph.
+- **[RDP](https://github.com/ZAX130/RDP)** — `model/model_rdp.py` is based on the RDP registration model shared by Haiqiao Wang (Shenzhen University), which itself builds upon VoxelMorph.
 - **[nnInteractive](https://github.com/MIC-DKFZ/nnInteractive)** — the default interactive foundation model in this release.
-- **[HaN-Seg](https://github.com/MIC-DKFZ/HaN-Seg)** — the bundled `test_data/` volumes are derived from cases 01 (query) and 06 (support).
+- **[HaN-Seg](https://han-seg2023.grand-challenge.org/)** ([download](https://zenodo.org/records/7442914#.ZBtfBHbMJaQ)) — the bundled `test_data/` volumes are derived from cases 01 (query) and 06 (support).
 
 ## Contact
 
