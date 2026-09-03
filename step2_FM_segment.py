@@ -107,7 +107,7 @@ def parse_args():
     )
     parser.add_argument(
         "--model-dir",
-        default=os.path.join(root, "models/nnInteractive_v1.0"),
+        default=os.path.join(root, "fm_models/nnInteractive_v1.0"),
         help="Path to nnInteractive_v1.0 model folder",
     )
     parser.add_argument(

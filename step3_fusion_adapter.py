@@ -20,6 +20,11 @@ from scipy.ndimage import distance_transform_edt
 from nii_io import load_array, save_array
 
 
+HANSEG_LABELS = list(range(1, 31))
+# Keep this empty when no labels should be excluded from Dice evaluation.
+HANSEG_REMOVE_LABELS = [3, 8, 9, 16, 17, 24, 25, 26, 29]
+
+
 def load_volume(path, as_label=False):
     arr = load_array(path, as_label=as_label)
     tensor = torch.from_numpy(arr.astype(np.float32))[None, None, ...]
@@ -175,11 +180,16 @@ def train_label_adapter(
     return query_prob.detach().cpu()
 
 
-def compute_multilabel_dice(gt_raw, pred_raw):
+def compute_multilabel_dice(gt_raw, pred_raw, labels=None, remove_labels=None):
     gt_np = gt_raw.numpy().astype(np.int32).ravel()
     pred_np = pred_raw.numpy().astype(np.int32).ravel()
-    labels = sorted(set(gt_np.tolist()) | set(pred_np.tolist()))
-    labels = [lb for lb in labels if lb != 0]
+    available_labels = set(gt_np.tolist()) | set(pred_np.tolist())
+    if labels is None:
+        labels = sorted(available_labels)
+    else:
+        labels = [lb for lb in labels if lb in available_labels]
+    remove_labels = set(remove_labels or [])
+    labels = [lb for lb in labels if lb != 0 and lb not in remove_labels]
     dices = []
     for lb in labels:
         gt_bin = (gt_raw == lb).numpy()
@@ -204,6 +214,8 @@ def run_fusion(
     num_epochs=30,
     target_shape=(128, 128, 128),
     device=None,
+    dice_labels=None,
+    remove_labels=None,
 ):
     os.makedirs(out_dir, exist_ok=True)
     device = device or ("cuda" if torch.cuda.is_available() else "cpu")
@@ -227,6 +239,7 @@ def run_fusion(
 
     query_image, _ = load_volume(query_image_path)
     query_gt_raw, query_gt_path = load_volume(query_gt_path, as_label=True)
+    query_gt_eval = query_gt_raw
     support_image, _ = load_volume(support_image_path)
     support_gt_raw, _ = load_volume(support_label_path, as_label=True)
     atlas_query_raw, _ = load_volume(atlas_query_path, as_label=True)
@@ -294,8 +307,15 @@ def run_fusion(
     save_label_volume(query_pred_full, query_gt_path, out_path)
     print(f"[Step 3] Saved: {out_path}")
 
-    label_dices, macro_dice = compute_multilabel_dice(query_gt_raw, query_pred_full)
+    label_dices, macro_dice = compute_multilabel_dice(
+        query_gt_eval,
+        query_pred_full,
+        labels=dice_labels,
+        remove_labels=remove_labels,
+    )
     print("[Step 3] ------- Final Dice (query GT in registration space) -------")
+    if remove_labels:
+        print(f"[Step 3] Ignored labels: {sorted(remove_labels)}")
     for lb, dice in label_dices:
         print(f"  Label {lb:2d}: Dice = {dice:.4f}")
     print(f"[Step 3] Mean Dice = {macro_dice:.4f}")
@@ -353,6 +373,23 @@ def parse_args():
         help="Downsampled training size (default: 128 128 128, ignored if --full-res)",
     )
     parser.add_argument("--device", default="cuda:3")
+    parser.add_argument(
+        "--dice-labels",
+        type=int,
+        nargs="+",
+        default=HANSEG_LABELS,
+        help="Label IDs included in final Dice evaluation (default: HaN-Seg labels 1-30)",
+    )
+    parser.add_argument(
+        "--remove-labels",
+        type=int,
+        nargs="*",
+        default=HANSEG_REMOVE_LABELS,
+        help=(
+            "Label IDs excluded from final Dice evaluation (default: HaN-Seg ignored labels). "
+            "Pass --remove-labels without values to include all labels."
+        ),
+    )
     return parser.parse_args()
 
 
@@ -377,4 +414,6 @@ if __name__ == "__main__":
         num_epochs=args.epochs,
         target_shape=target_shape,
         device=args.device,
+        dice_labels=args.dice_labels,
+        remove_labels=args.remove_labels,
     )

@@ -16,8 +16,8 @@ import torch
 import torch.nn.functional as F
 from torch.optim.lr_scheduler import PolynomialLR
 
-from model.loss import gradient_loss, mse_loss
-from model.model_rdp import RDP, register_model
+from reg_models.loss import gradient_loss, mse_loss
+from reg_models.model_rdp import RDP, register_model
 from nii_io import load_array, save_array
 
 

@@ -93,25 +93,27 @@ pip install -e ./client
 pip install -e .
 ```
 
-### Foundation-model weights
+### Foundation-model weights and example data
 
-nnInteractive weights are **not** bundled (~400 MB). Download them from Hugging Face:
+nnInteractive weights are **not** bundled (~400 MB). You can download them from Hugging Face:
 
 ```bash
 pip install huggingface_hub
 
 huggingface-cli download MIC-DKFZ/nnInteractive \
   --include "nnInteractive_v1.0/*" \
-  --local-dir models
+  --local-dir fm_models
 ```
 
 After download, the following file should exist:
 
 ```
-models/nnInteractive_v1.0/fold_0/checkpoint_final.pth
+fm_models/nnInteractive_v1.0/fold_0/checkpoint_final.pth
 ```
 
-> Place the model at `models/nnInteractive_v1.0/` relative to the repository root. Step 2 uses this path by default (`--model-dir`).
+Alternatively, our **[NJU Box download](https://box.nju.edu.cn/d/3654fee430cc44e681a9/)** provides both the nnInteractive weights and the preprocessed HaN-Seg test image example. Place the downloaded files under the repository root so that the model path above and the `test_data/` layout shown below are available.
+
+> Step 2 uses `fm_models/nnInteractive_v1.0/` by default (`--model-dir`).
 
 nnInteractive model license: [CC BY-NC-SA 4.0](https://huggingface.co/MIC-DKFZ/nnInteractive) (non-commercial).
 
@@ -157,8 +159,6 @@ python step2_FM_segment.py \
 python step3_fusion_adapter.py --device cuda:0 --full-res
 ```
 
-Step 3 defaults to `cuda:3` at **full resolution** (~48 GB). Change `--device` as needed. If you run out of memory, omit `--full-res` or pass e.g. `--target-shape 128 128 128`.
-
 ## Custom Data
 
 Point Step 1 at your own atlas–query pair (NIfTI):
@@ -183,8 +183,8 @@ AtlasSegFM_release_v1/
 ├── step3_fusion_adapter.py    # test-time fusion adapter
 ├── run_pipeline.sh
 ├── img/                       # teaser figure
-├── model/                     # deformable registration network (RDP)
-├── models/nnInteractive_v1.0/ # download separately (see above)
+├── reg_models/                # deformable registration network (RDP)
+├── fm_models/nnInteractive_v1.0/ # download separately (see above)
 └── test_data/
     ├── images/
     │   ├── img_query.nii.gz       # query (fixed) CT  [HaN-Seg case 01]
@@ -226,11 +226,11 @@ Please also cite **nnInteractive**, **VoxelMorph**, and **RDP** when using the c
 
 ## Acknowledgements
 
-The deformable registration module in `model/` is adapted from existing open-source implementations. We thank the authors of the following projects:
+The deformable registration module in `reg_models/` is adapted from existing open-source implementations. We thank the authors of the following projects:
 
 - **[VoxelMorph](https://github.com/voxelmorph/voxelmorph)** — registration architecture and training utilities.
   Balakrishnan, G., Zhao, A., Sabuncu, M. R., Guttag, J., & Dalca, A. V. (2019). VoxelMorph: a learning framework for deformable medical image registration. *IEEE TMI*, 38(8), 1788–1800.
-- **[RDP](https://github.com/ZAX130/RDP)** — `model/model_rdp.py` is based on the RDP registration model shared by Haiqiao Wang (Shenzhen University), which itself builds upon VoxelMorph.
+- **[RDP](https://github.com/ZAX130/RDP)** — `reg_models/model_rdp.py` is based on the RDP registration model shared by Haiqiao Wang (Shenzhen University), which itself builds upon VoxelMorph.
 - **[nnInteractive](https://github.com/MIC-DKFZ/nnInteractive)** — the default interactive foundation model in this release.
 - **[HaN-Seg](https://han-seg2023.grand-challenge.org/)** ([download](https://zenodo.org/records/7442914#.ZBtfBHbMJaQ)) — the bundled `test_data/` volumes are derived from cases 01 (query) and 06 (support).
 

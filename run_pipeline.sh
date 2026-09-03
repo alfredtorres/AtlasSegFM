@@ -22,9 +22,9 @@ python step1_registration.py \
   --moving-label test_data/labels/label_query.nii.gz \
   --out-dir test_data/step1_output_support
 
-if [[ ! -f "models/nnInteractive_v1.0/fold_0/checkpoint_final.pth" ]]; then
+if [[ ! -f "fm_models/nnInteractive_v1.0/fold_0/checkpoint_final.pth" ]]; then
   echo "Error: nnInteractive model not found."
-  echo "Download it to models/nnInteractive_v1.0/ — see README.md"
+  echo "Download it to fm_models/nnInteractive_v1.0/ — see README.md"
   exit 1
 fi
 
